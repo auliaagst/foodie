@@ -1,0 +1,316 @@
+* {
+    font-family: 'Ubuntu', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+.header {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #FFEEEE;
+    color: #fff;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.header .logo {
+    width: 50px;
+    padding-left: 10px;
+}
+
+.header .title {
+    font-size: 24px;
+    font-weight: bold;
+    color:black;
+    padding-left: 5px;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    padding: 8px;
+    background-color: #bf1722;
+    color: white;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+.menu {
+    display: flex;
+    list-style-type: none;
+    padding-right: 10px;
+    text-align: right;
+    color: black;
+}
+
+.menu a:hover {
+    background-color: #FFC670;
+    color: #FFEEEE;
+    padding: 10px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+.menu ul li a {
+    text-decoration: none;
+    color:black;
+    padding: 7px;
+}
+
+.menu a.active {
+    border-bottom: 2px solid #fff;
+}
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.bar {
+    background-color: #000000;
+    height: 3px;
+    width: 25px;
+    margin: 3px 0;
+    transition: 0.4s;
+}
+
+.hero {
+    position: relative;
+    text-align: left;
+    padding-top: 70px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.hero img {
+    width: 100%;
+    filter: brightness(50%) blur(2px);
+}
+
+.content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-70%, -50%);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+    max-width: 80%;
+}
+
+.content h1 {
+    font-size: 3.5em;
+    margin-bottom: 10px;
+    color: #FFC670;
+}
+
+.content p {
+    font-size: 1em;
+    line-height: 1.6;
+    color: #FFEEEE;
+}
+
+.main-content {
+    width: 100%;
+}
+
+.main-content .judul {
+    color: #AD0000;
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+    font-size: 2em;
+}
+
+.restaurant-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3,1fr);
+    gap: 30px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+.resto {
+    padding: 10px;
+    border: 1.5px solid #FFC670;
+    border-radius: 20px;
+}
+
+.restaurant-container .resto img {
+    width: 100%;
+    border-radius:20px;
+}
+
+.restaurant-container .resto h2 {
+    font-size: 1.5em;
+    text-align: center;
+    padding: 15px;
+}
+
+.about {
+    height: 300px;
+    background-color: #AD0000;
+    margin: 30px;
+    border-radius: 20px;
+}
+
+.about h2 {
+    color: #FFEEEE;
+    text-align: center;
+    padding: 50px;
+    margin-top: 20px;
+}
+
+.about .sosmed {
+    text-align: center;
+}
+
+.about .sosmed a {
+    font-size: 70px;
+    color:#FFC670;
+    text-decoration: none;
+    margin: 10px;
+}
+
+.button, .anchor, input[type="text"], textarea {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+@media (max-width: 768px) {
+    .menu {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 50%;
+        position: absolute;
+        top: 70px;
+        right: 0;
+        background-color: #FFEEEE;
+        z-index: 1;
+        transform: translateX(100%);
+        transition: transform 0.4s;
+        height: 100vh;
+    }
+
+    .menu a:hover {
+        background-color: #FFC670;
+        color: #FFEEEE;
+        padding: 10px;
+        border-radius: 20px;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+    .menu.active {
+        display: block;
+        transform: translateX(0);
+    }
+
+    .menu ul li {
+        display: block;
+        margin: 40px 0;
+    }
+
+    .menu-toggle {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        cursor: pointer;
+        margin-right: 30px;
+    }
+
+    .bar .close-icon {
+        transition: 0.4s;
+    }
+
+    .content {
+        top: 60%;
+        left: 50%;
+    }
+    
+    .close-icon {
+        display: none;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    
+    .close-icon .active {
+        display: block;
+    }
+
+    .restaurant-container {
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .restaurant-container .resto img {
+        width: 100%;
+    }
+
+    .restaurant-container .resto h2 {
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 500px) {
+    .content h1 {
+        font-size: 2em;
+        margin-bottom: 10px;
+        color: #FFC670;
+    }
+    
+    .content p {
+        font-size: 0.6em;
+        line-height: 1.6;
+        color: #FFEEEE;
+    }
+
+    .restaurant-container {
+        max-width: 100%;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+    }
+
+    .restaurant-container .resto img {
+        width: 100%;
+    }
+
+    .restaurant-container .resto h2 {
+        font-size: 1em;
+    }
+
+    .about .sosmed a {
+        font-size: 50px;
+    }
+}
