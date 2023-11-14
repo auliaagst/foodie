@@ -1,3 +1,6 @@
+/* eslint-disable no-alert */
+/* eslint-disable no-undef */
+/* eslint-disable semi */
 /* eslint-disable func-names */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
@@ -7,29 +10,43 @@
 import 'regenerator-runtime';
 import '../styles/main.css';
 import swRegister from './sw-register';
+import 'lazysizes';
+import 'lazysizes/plugins/parent-fit/ls.parent-fit';
 
+const START = 10;
+const NUMBER_OF_IMAGES = 100;
+
+// service worker
 self.addEventListener('install', (event) => {
   console.log('Installing Service Worker ...');
-
-  // TODO: Caching App Shell Resource
 });
 
 self.addEventListener('activate', (event) => {
   console.log('Activating Service Worker ...');
-
-  // TODO: Delete old caches
 });
 
 self.addEventListener('fetch', (event) => {
   console.log(event.request);
 
   event.respondWith(fetch(event.request));
-  // TODO: Add/get fetch request to/from caches
+});
+
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.substr(1);
+
+  if (hash.startsWith('detail/')) {
+    const restaurantId = hash.split('/')[1];
+    showDetailPage(restaurantId);
+  } else if (hash === 'favorites') {
+    showFavoritesPage();
+  }
 });
 
 window.addEventListener('load', () => {
   swRegister();
 });
+
+// indexedDB
 
 let db;
 
@@ -42,7 +59,7 @@ request.onerror = function (event) {
 request.onsuccess = function (event) {
   db = event.target.result;
   console.log('Database terbuka sukses');
-  displayData(); // Memanggil fungsi displayData setelah database terbuka
+  displayData(); // memanggil fungsi displayData setelah database terbuka
 };
 
 request.onupgradeneeded = function (event) {
@@ -81,6 +98,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// halaman detail
+
 const showDetailPage = async (restaurantId) => {
   const mainContent = document.querySelector('main');
   mainContent.innerHTML = '<div id="detailPage"></div>';
@@ -105,7 +124,7 @@ const showDetailPage = async (restaurantId) => {
     detailPage.innerHTML = `
         <div class='resto-detail'>
           <div class="left">
-            <img class="pict" src=https://restaurant-api.dicoding.dev/images/large/${restaurantDetail.pictureId} alt='${restaurantDetail.name}'>
+            <img class="lazyload" data-src=https://restaurant-api.dicoding.dev/images/large/${restaurantDetail.pictureId} alt='${restaurantDetail.name}' crossorigin="anonymous">
             <i class="fas fa-heart favorite-icon ${favoriteClass}" data-restaurant-id="${restaurantId}" tabindex="0"></i>
           </div>
           <div class="right">
@@ -150,7 +169,7 @@ const showDetailPage = async (restaurantId) => {
     const backButton = detailPage.querySelector('#backButton');
     backButton.addEventListener('click', (event) => {
       event.preventDefault();
-      window.location.href = 'index.html'; // Ganti dengan halaman utama Anda
+      window.location.href = 'index.html';
     });
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -176,7 +195,7 @@ const displayData = async () => {
       html += `
         <div class='resto' tabindex="0">
             <a href="#detail/${restaurant.id}">
-                <img src=https://restaurant-api.dicoding.dev/images/large/${restaurant.pictureId} alt='${restaurant.name}'>
+                <img class="lazyload" data-src=https://restaurant-api.dicoding.dev/images/large/${restaurant.pictureId} alt='${restaurant.name}' crossorigin="anonymous">
                 <h2>${restaurant.name}</h2>
                 <p>Rating: ${restaurant.rating}</p>
                 <p>Kota: ${restaurant.city}</p>
@@ -188,9 +207,7 @@ const displayData = async () => {
 
     output.innerHTML = html;
 
-    // LOPELOPE
     const heartIcons = document.querySelectorAll('.favorite-icon');
-
     heartIcons.forEach(async (heartIcon) => {
       const restaurantId = heartIcon.dataset.restaurantId;
 
@@ -234,17 +251,6 @@ const displayData = async () => {
     console.error('Error fetching data:', error);
   }
 };
-
-window.addEventListener('hashchange', () => {
-  const hash = window.location.hash.substr(1);
-
-  if (hash.startsWith('detail/')) {
-    const restaurantId = hash.split('/')[1];
-    showDetailPage(restaurantId);
-  } else if (hash === 'favorites') {
-    showFavoritesPage();
-  }
-});
 
 const addToFavorite = async (restaurantId) => {
   const transaction = db.transaction(['restoran'], 'readwrite');
@@ -344,10 +350,8 @@ function showFavoritesPage() {
     if (event.target.classList.contains('favorite-icon')) {
       const restaurantId = event.target.dataset.restaurantId;
 
-      // Hapus data dari IndexedDB
       await removeFromFavorite(restaurantId);
 
-      // Hapus elemen dari tampilan
       event.target.parentElement.remove();
     }
   });
@@ -370,7 +374,7 @@ function showFavoritesPage() {
 
           favoriteItem.innerHTML = `
               <a href="#detail/${restaurantDetail.id}">
-                <img src=https://restaurant-api.dicoding.dev/images/large/${restaurantDetail.pictureId} alt='${restaurantDetail.name}'>
+                <img class="lazyload" data-src=https://restaurant-api.dicoding.dev/images/large/${restaurantDetail.pictureId} alt='${restaurantDetail.name}' crossorigin="anonymous">
                 <h2>${restaurantDetail.name}</h2>
                 <p>Rating: ${restaurantDetail.rating}</p>
               <p>Kota: ${restaurantDetail.city}</p>
@@ -408,3 +412,10 @@ class MyFooter extends HTMLElement {
 }
 
 customElements.define('my-footer', MyFooter);
+
+import('lodash.filter')
+  .then((module) => module.default)
+  // .then(filterContacts)
+  .catch((error) => alert(error));
+
+export default { addToFavorite, removeFromFavorite, isRestaurantFavorite };

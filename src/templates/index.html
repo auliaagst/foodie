@@ -36,7 +36,16 @@
     <main id="content">
         <div class="hero" id="home" tabindex="0">
             <div class="overlay"></div>
-            <img src="./images/heros/hero-image_2.jpg" alt="hero">
+            <img 
+                srcset="
+                    ./images/heros/hero-image-small.jpg 550w,
+                    ./images/heros/hero-image-large.jpg 1200w
+                "
+                sizes="(max-width: 550px) 320px, 1200px"
+                src="./images/heros/hero-image-large.jpg"
+                class="img-hero" 
+                alt="hero"
+            >
             <div class="content">
                 <h1>Restaurant List</h1>
                 <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. A odio sequi quisquam iste quaerat obcaecati quos dolor magnam, ratione perspiciatis doloribus impedit laboriosam laborum reiciendis. Ullam aperiam asperiores voluptas voluptates?</p>
@@ -51,7 +60,7 @@
             <div class="sosmed">
                 <a href="https://www.instagram.com/gus.ta__/"><i class="fab fa-instagram"></i></a>
                 <a href="https://www.facebook.com/auliaaugusta02"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.linkedin.com/in/aulia-augusta-947418226/"><i class="fab fa-linkedin"></i></a>
+                <a href="https://www.linkedin.com/in/auliaaugusta/"><i class="fab fa-linkedin"></i></a>
                 <a href="https://github.com/auliaagst"><i class="fab fa-github"></i></a>
             </div>
         </div>

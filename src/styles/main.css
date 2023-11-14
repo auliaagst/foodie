@@ -127,7 +127,7 @@
     background: rgba(0, 0, 0, 0.3);
 }
 
-.hero img {
+.hero .img-hero {
     width: 100%;
     filter: brightness(50%) blur(2px);
 }
@@ -202,7 +202,7 @@
     border: 2px solid #AD0000;
     border-radius: 20px;
 }
-.resto-detail .pict {
+.resto-detail img {
     width: 90%;
     height: auto;
     border-radius: 20px;
@@ -429,7 +429,7 @@
     }
 }
 
-@media (max-width: 500px) {
+@media (max-width: 550px) {
     .content h1 {
         font-size: 2em;
         margin-bottom: 10px;
