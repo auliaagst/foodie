@@ -21,9 +21,9 @@ const config = {
     '^.+\\.(js|ts)$': 'babel-jest',
   },
 
-  // testPathIgnorePatterns: [
-  //   '\\\\node_modules\\\\',
-  // ],
+  testPathIgnorePatterns: [
+    '\\\\node_modules\\\\',
+  ],
 };
 
 module.exports = config;
