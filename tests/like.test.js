@@ -1,65 +1,77 @@
-// restaurant.test.js
-import '@babel/preset-env';
-import 'fake-indexeddb/auto';
-import {
-  addToFavorite,
-  removeFromFavorite,
-  isRestaurantFavorite,
-} from '../src/scripts/index'; // Ganti dengan path yang sesuai
+// Import fungsi atau modul yang diperlukan untuk pengujian
+import { addToFavorite, removeFromFavorite, isRestaurantFavorite } from '../src/scripts/index'; // Sesuaikan dengan path sesungguhnya
 
-describe('Fungsi Restoran', () => {
-  test('addToFavorite menambahkan restoran ke favorit', async () => {
-    // Mock data
-    const mockRestaurantId = '123';
+describe('Restaurant Detail', () => {
+  // Mock data restoran untuk pengujian
+  const mockRestaurantId = '123';
+  const mockRestaurant = {
+    id: mockRestaurantId,
+    name: 'Mock Restaurant',
+    // ... tambahkan properti lain yang diperlukan
+  };
 
-    // Panggil fungsi addToFavorite
-    await addToFavorite(mockRestaurantId);
-
-    // Periksa apakah restoran telah ditambahkan ke favorit
-    const isFavorite = await isRestaurantFavorite(mockRestaurantId);
-    expect(isFavorite).toBeTruthy();
+  beforeEach(() => {
+    // Set up before each test
+    // Mungkin Anda perlu melakukan pembersihan atau inisialisasi lainnya
   });
 
-  test('removeFromFavorite menghapus restoran dari favorit', async () => {
-    // Mock data
-    const mockRestaurantId = '123';
-
-    // Tambahkan restoran ke favorit terlebih dahulu
-    await addToFavorite(mockRestaurantId);
-
-    // Panggil fungsi removeFromFavorite
-    await removeFromFavorite(mockRestaurantId);
-
-    // Periksa apakah restoran telah dihapus dari favorit
-    const isFavorite = await isRestaurantFavorite(mockRestaurantId);
-    expect(isFavorite).toBeFalsy();
+  afterEach(() => {
+    // Tear down after each test
+    // Mungkin Anda perlu melakukan pembersihan atau inisialisasi lainnya
   });
 
-  test('isRestaurantFavorite mengembalikan true untuk restoran favorit', async () => {
-    // Mock data
-    const mockRestaurantId = '123';
+  it('should initially show "Tambahkan ke Favorite"', async () => {
+    // Mock fungsi isRestaurantFavorite untuk mengembalikan false
+    isRestaurantFavorite.mockResolvedValue(false);
 
-    // Tambahkan restoran ke favorit terlebih dahulu
-    await addToFavorite(mockRestaurantId);
+    // Setup elemen HTML atau state yang diperlukan
+    document.body.innerHTML = `
+      <div id="detailPage">
+        <i class="fas fa-heart favorite-icon" data-restaurant-id="${mockRestaurantId}" tabindex="0"></i>
+      </div>
+    `;
 
-    // Panggil fungsi isRestaurantFavorite
-    const isFavorite = await isRestaurantFavorite(mockRestaurantId);
+    // Panggil showDetailPage atau fungsi yang menampilkan halaman detail
+    // Pastikan untuk memanggil fungsi ini dengan ID restoran yang benar
+    await showDetailPage(mockRestaurantId);
 
-    // Periksa apakah fungsi mengembalikan true
-    expect(isFavorite).toBeTruthy();
+    // Pastikan aria-label pada awalnya adalah "Tambahkan ke Favorite"
+    const heartIcon = document.querySelector('.favorite-icon');
+    expect(heartIcon.getAttribute('aria-label')).toBe('Tambahkan ke Favorite');
   });
 
-  test('isRestaurantFavorite mengembalikan false untuk restoran yang bukan favorit', async () => {
-    // Mock data
-    const mockRestaurantId = '123';
+  it('should update to "Hapus dari Favorite" after clicking heartIcon', async () => {
+    // Mock fungsi isRestaurantFavorite untuk mengembalikan false
+    isRestaurantFavorite.mockResolvedValue(false);
 
-    // Pastikan restoran tidak ada di favorit
-    await removeFromFavorite(mockRestaurantId);
+    // Setup elemen HTML atau state yang diperlukan
+    document.body.innerHTML = `
+      <div id="detailPage">
+        <i class="fas fa-heart favorite-icon" data-restaurant-id="${mockRestaurantId}" tabindex="0"></i>
+      </div>
+    `;
 
-    // Panggil fungsi isRestaurantFavorite
+    // Mock fetch untuk mengembalikan data restoran
+    jest.spyOn(window, 'fetch').mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ restaurant: mockRestaurant }),
+    });
+
+    // Panggil showDetailPage atau fungsi yang menampilkan halaman detail
+    // Pastikan untuk memanggil fungsi ini dengan ID restoran yang benar
+    await showDetailPage(mockRestaurantId);
+
+    // Periksa apakah fungsi addToFavorite dipanggil saat mengklik heartIcon
+    const addToFavoriteSpy = jest.spyOn(window, 'addToFavorite');
+    const heartIcon = document.querySelector('.favorite-icon');
+    heartIcon.click();
+    expect(addToFavoriteSpy).toHaveBeenCalledWith(mockRestaurantId);
+
+    // Pastikan bahwa data restoran sudah disimpan
     const isFavorite = await isRestaurantFavorite(mockRestaurantId);
+    expect(isFavorite).toBe(true);
 
-    // Periksa apakah fungsi mengembalikan false
-    expect(isFavorite).toBeFalsy();
+    // Pastikan bahwa aria-label telah diperbarui menjadi "Hapus dari Favorite"
+    expect(heartIcon.getAttribute('aria-label')).toBe('Hapus dari Favorite');
   });
 });

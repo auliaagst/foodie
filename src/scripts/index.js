@@ -148,8 +148,10 @@ const showDetailPage = async (restaurantId) => {
     if (isFavorite) {
       heartIcon.classList.add('favorited');
       heartIcon.style.color = '#AD0000';
+      heartIcon.setAttribute('aria-label', 'Hapus Dari Favorite');
     } else {
       heartIcon.style.color = 'grey';
+      heartIcon.setAttribute('aria-label', 'Tambahkan ke Favorite');
     }
 
     heartIcon.addEventListener('click', async () => {
@@ -159,10 +161,12 @@ const showDetailPage = async (restaurantId) => {
         removeFromFavorite(restaurantId);
         heartIcon.classList.remove('favorited');
         heartIcon.style.color = 'grey';
+        heartIcon.setAttribute('aria-label', 'Tambahkan ke Favorite');
       } else {
         addToFavorite(restaurantId);
         heartIcon.classList.add('favorited');
         heartIcon.style.color = '#AD0000';
+        heartIcon.setAttribute('aria-label', 'Hapus Dari Favorite');
       }
     });
 
@@ -215,8 +219,10 @@ const displayData = async () => {
 
       if (isFavorite) {
         heartIcon.style.color = '#AD0000';
+        heartIcon.setAttribute('aria-label', 'Hapus Dari Favorite');
       } else {
         heartIcon.style.color = 'grey';
+        heartIcon.setAttribute('aria-label', 'Tambahkan ke Favorite');
       }
 
       heartIcon.addEventListener('click', async (event) => {
@@ -232,12 +238,14 @@ const displayData = async () => {
             deleteRequest.onsuccess = function (event) {
               console.log(`Restaurant dengan ID ${restaurantId} dihapus dari favorit`);
               heartIcon.style.color = 'grey';
+              heartIcon.setAttribute('aria-label', 'Tambahkan ke Favorite');
             };
           } else {
             const addRequest = objectStore.add({ id: restaurantId, favorite: true });
             addRequest.onsuccess = function (event) {
               console.log(`Restaurant dengan ID ${restaurantId} ditambahkan ke favorit`);
               heartIcon.style.color = '#AD0000';
+              heartIcon.setAttribute('aria-label', 'Hapus Dari Favorite');
             };
           }
 
