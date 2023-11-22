@@ -1,24 +1,18 @@
 /* eslint-disable no-undef */
 Feature('Membatalkan Menyukai Restoran');
 
-Scenario('Menyukai Restoran', async ({ I }) => {
+Scenario('Membatalkan Menyukai Restoran', async ({ I }) => {
   I.amOnPage('/#/home');
 
   // Memastikan kita berada di halaman yang benar
-  I.see('.resto');
+  I.seeElement('.favorite-container');
+  I.click(locate('.favorite-container').first());
 
-  // Memastikan tombol like ada
-  I.seeElement('.favorite-icon');
+  I.click('#favPage');
+  I.seeElement('.resto');
 
-  // Capture status favorit awal
-  const initialFavoriteStatus = await I.grabAttributeFrom('.favorite-icon', 'class');
+  I.seeElement('.favorite-container');
+  I.click(locate('.favorite-container').first());
 
-  // Memastikan restoran tidak disukai awalnya
-  I.see('favorited', initialFavoriteStatus);
-
-  // Klik tombol like lagi untuk membatalkan menyukai
-  I.click('.favorite-icon');
-
-  // Memastikan restoran tidak disukai setelah dibatalkan
-  I.dontSee('favorited', '.favorite-icon');
+  I.dontSeeElement('.resto');
 });

@@ -5,26 +5,13 @@ Scenario('Menyukai Restoran', async ({ I }) => {
   I.amOnPage('/#/home');
 
   // Memastikan kita berada di halaman yang benar
-  I.see('.resto');
+  I.seeElement('.resto a .name');
+  I.click(locate('.resto a .name').first());
 
   // Memastikan tombol like ada
-  I.seeElement('.favorite-icon');
+  I.seeElement('.favorite-container');
+  I.click('.favorite-container');
 
-  // Capture status favorit awal
-  const initialFavoriteStatus = await I.grabAttributeFrom('.favorite-icon', 'class');
-
-  // Memastikan restoran tidak disukai awalnya
-  I.dontSee('favorited', initialFavoriteStatus);
-
-  // Klik tombol like
-  I.click('.favorite-icon');
-
-  // Memastikan restoran disukai setelah diklik
-  I.see('favorited', '.favorite-icon');
-
-  // Klik tombol like lagi untuk membatalkan menyukai
-  I.click('.favorite-icon');
-
-  // Memastikan restoran tidak disukai setelah dibatalkan
-  I.dontSee('favorited', '.favorite-icon');
+  I.click('#favPage');
+  I.seeElement('.resto');
 });

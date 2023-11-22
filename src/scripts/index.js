@@ -125,7 +125,9 @@ const showDetailPage = async (restaurantId) => {
         <div class='resto-detail'>
           <div class="left">
             <img class="lazyload" data-src=https://restaurant-api.dicoding.dev/images/large/${restaurantDetail.pictureId} alt='${restaurantDetail.name}' crossorigin="anonymous">
-            <i class="fas fa-heart favorite-icon ${favoriteClass}" data-restaurant-id="${restaurantId}" tabindex="0"></i>
+            <div class="favorite-container" data-restaurant-id="${restaurantId}" tabindex="0" >
+              <i class="fas fa-heart favorite-icon ${favoriteClass}"></i>
+            </div>
           </div>
           <div class="right">
             <h2>${restaurantDetail.name}</h2>
@@ -144,29 +146,31 @@ const showDetailPage = async (restaurantId) => {
       `;
 
     // Menambahkan event listener pada ikon hati di halaman detail
-    const heartIcon = detailPage.querySelector('.favorite-icon');
+    const favoriteContainer = detailPage.querySelector('.favorite-container');
+
     if (isFavorite) {
-      heartIcon.classList.add('favorited');
-      heartIcon.style.color = '#AD0000';
-      heartIcon.setAttribute('aria-label', 'Hapus Dari Favorite');
+      favoriteContainer.classList.add('favorited');
+      favoriteContainer.style.color = '#AD0000';
+      favoriteContainer.setAttribute('aria-label', 'Hapus Dari Favorite');
     } else {
-      heartIcon.style.color = 'grey';
-      heartIcon.setAttribute('aria-label', 'Tambahkan ke Favorite');
+      favoriteContainer.style.color = 'grey';
+      favoriteContainer.setAttribute('aria-label', 'Tambahkan ke Favorite');
     }
 
-    heartIcon.addEventListener('click', async () => {
+    favoriteContainer.addEventListener('click', async () => {
+      const restaurantId = favoriteContainer.dataset.restaurantId;
       const isFavorite = await isRestaurantFavorite(restaurantId);
 
       if (isFavorite) {
         removeFromFavorite(restaurantId);
-        heartIcon.classList.remove('favorited');
-        heartIcon.style.color = 'grey';
-        heartIcon.setAttribute('aria-label', 'Tambahkan ke Favorite');
+        favoriteContainer.classList.remove('favorited');
+        favoriteContainer.style.color = 'grey';
+        favoriteContainer.setAttribute('aria-label', 'Tambahkan ke Favorite');
       } else {
         addToFavorite(restaurantId);
-        heartIcon.classList.add('favorited');
-        heartIcon.style.color = '#AD0000';
-        heartIcon.setAttribute('aria-label', 'Hapus Dari Favorite');
+        favoriteContainer.classList.add('favorited');
+        favoriteContainer.style.color = '#AD0000';
+        favoriteContainer.setAttribute('aria-label', 'Hapus Dari Favorite');
       }
     });
 
@@ -195,39 +199,42 @@ const displayData = async () => {
     data.restaurants.forEach((restaurant) => {
       const isFavorite = isRestaurantFavorite(restaurant.id);
       const favoriteClass = isFavorite ? 'favorited' : '';
+      const favoriteColor = isFavorite ? 'color: #AD0000;' : 'color: grey;';
 
       html += `
         <div class='resto' id='restoContainer' tabindex="0">
             <a href="#detail/${restaurant.id}">
                 <img class="lazyload" data-src=https://restaurant-api.dicoding.dev/images/large/${restaurant.pictureId} alt='${restaurant.name}' crossorigin="anonymous">
-                <h2>${restaurant.name}</h2>
+                <h2 class="name">${restaurant.name}</h2>
                 <p>Rating: ${restaurant.rating}</p>
                 <p>Kota: ${restaurant.city}</p>
             </a>
-            <i class="fas fa-heart favorite-icon ${favoriteClass}" data-restaurant-id="${restaurant.id}" tabindex="0"></i>
+            <div class="favorite-container" data-restaurant-id="${restaurant.id}" style="${favoriteColor}">
+                <i class="fas fa-heart favorite-icon ${favoriteClass}" tabindex="0"></i>
+            </div>
         </div>
       `;
     });
 
     output.innerHTML = html;
 
-    const heartIcons = document.querySelectorAll('.favorite-icon');
-    heartIcons.forEach(async (heartIcon) => {
-      const restaurantId = heartIcon.dataset.restaurantId;
+    const favoriteContainer = document.querySelectorAll('.favorite-container');
+    favoriteContainer.forEach(async (favoriteContainer) => {
+      const restaurantId = favoriteContainer.dataset.restaurantId;
 
       const isFavorite = await isRestaurantFavorite(restaurantId);
 
       if (isFavorite) {
-        heartIcon.style.color = '#AD0000';
-        heartIcon.setAttribute('aria-label', 'Hapus Dari Favorite');
+        favoriteContainer.style.color = '#AD0000';
+        favoriteContainer.setAttribute('aria-label', 'Hapus Dari Favorite');
       } else {
-        heartIcon.style.color = 'grey';
-        heartIcon.setAttribute('aria-label', 'Tambahkan ke Favorite');
+        favoriteContainer.style.color = 'grey';
+        favoriteContainer.setAttribute('aria-label', 'Tambahkan ke Favorite');
       }
 
-      heartIcon.addEventListener('click', async (event) => {
-        const restaurantId = event.target.dataset.restaurantId;
-        const isFavorite = event.target.classList.contains('favorited');
+      favoriteContainer.addEventListener('click', async () => {
+        const restaurantId = favoriteContainer.dataset.restaurantId;
+        const isFavorite = favoriteContainer.classList.contains('favorited');
 
         try {
           const transaction = db.transaction(['restoran'], 'readwrite');
@@ -235,21 +242,21 @@ const displayData = async () => {
 
           if (isFavorite) {
             const deleteRequest = objectStore.delete(restaurantId);
-            deleteRequest.onsuccess = function (event) {
+            deleteRequest.onsuccess = function () {
               console.log(`Restaurant dengan ID ${restaurantId} dihapus dari favorit`);
-              heartIcon.style.color = 'grey';
-              heartIcon.setAttribute('aria-label', 'Tambahkan ke Favorite');
+              favoriteContainer.style.color = 'grey';
+              favoriteContainer.setAttribute('aria-label', 'Tambahkan ke Favorite');
             };
           } else {
             const addRequest = objectStore.add({ id: restaurantId, favorite: true });
-            addRequest.onsuccess = function (event) {
+            addRequest.onsuccess = function () {
               console.log(`Restaurant dengan ID ${restaurantId} ditambahkan ke favorit`);
-              heartIcon.style.color = '#AD0000';
-              heartIcon.setAttribute('aria-label', 'Hapus Dari Favorite');
+              favoriteContainer.style.color = '#AD0000';
+              favoriteContainer.setAttribute('aria-label', 'Hapus Dari Favorite');
             };
           }
 
-          event.target.classList.toggle('favorited');
+          favoriteContainer.classList.toggle('favorited');
         } catch (error) {
           console.error('Error:', error);
         }
@@ -355,12 +362,16 @@ function showFavoritesPage() {
 
   const favoritesList = document.getElementById('favoritesList');
   favoritesList.addEventListener('click', async (event) => {
-    if (event.target.classList.contains('favorite-icon')) {
-      const restaurantId = event.target.dataset.restaurantId;
+    const favoriteContainer = event.target.closest('.favorite-container');
+
+    if (favoriteContainer) {
+      const restaurantId = favoriteContainer.dataset.restaurantId;
 
       await removeFromFavorite(restaurantId);
 
-      event.target.parentElement.remove();
+      // Hapus elemen restoran dari tampilan
+      const restoContainer = favoriteContainer.parentElement;
+      restoContainer.remove();
     }
   });
 
@@ -387,7 +398,9 @@ function showFavoritesPage() {
                 <p>Rating: ${restaurantDetail.rating}</p>
               <p>Kota: ${restaurantDetail.city}</p>
               </a>
-              <i class="fas fa-heart favorite-icon favorited" data-restaurant-id="${restaurantDetail.id}" style="color: #AD0000;" tabindex="0"></i>
+              <div class="favorite-container" data-restaurant-id="${restaurantDetail.id}" tabindex="0" >
+                <i class="fas fa-heart favorite-icon favorited" style="color: #AD0000;"></i>
+              </div>
           `;
 
           favoritesList.appendChild(favoriteItem);

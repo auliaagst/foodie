@@ -6,7 +6,7 @@ import { addToFavorite, isRestaurantFavorite } from '../src/scripts/index';
 describe('Menyukai Restoran', () => {
   it('seharusnya tombol favorite terlihat sebelum menyukai restoran', async () => {
     document.body.innerHTML = `
-      <div id="restoContainer">
+      <div id="favoriteContainer">
         <i id="heartIcon" class="favorite-icon" data-restaurant-id="1"></i>
       </div>
     `;
