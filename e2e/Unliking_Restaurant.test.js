@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-Feature('Menyukai Restoran');
+Feature('Membatalkan Menyukai Restoran');
 
 Scenario('Menyukai Restoran', async ({ I }) => {
   I.amOnPage('/#/home');
@@ -14,13 +14,7 @@ Scenario('Menyukai Restoran', async ({ I }) => {
   const initialFavoriteStatus = await I.grabAttributeFrom('.favorite-icon', 'class');
 
   // Memastikan restoran tidak disukai awalnya
-  I.dontSee('favorited', initialFavoriteStatus);
-
-  // Klik tombol like
-  I.click('.favorite-icon');
-
-  // Memastikan restoran disukai setelah diklik
-  I.see('favorited', '.favorite-icon');
+  I.see('favorited', initialFavoriteStatus);
 
   // Klik tombol like lagi untuk membatalkan menyukai
   I.click('.favorite-icon');

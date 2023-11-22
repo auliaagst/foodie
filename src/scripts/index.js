@@ -197,7 +197,7 @@ const displayData = async () => {
       const favoriteClass = isFavorite ? 'favorited' : '';
 
       html += `
-        <div class='resto' tabindex="0">
+        <div class='resto' id='restoContainer' tabindex="0">
             <a href="#detail/${restaurant.id}">
                 <img class="lazyload" data-src=https://restaurant-api.dicoding.dev/images/large/${restaurant.pictureId} alt='${restaurant.name}' crossorigin="anonymous">
                 <h2>${restaurant.name}</h2>

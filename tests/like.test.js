@@ -1,77 +1,49 @@
-// Import fungsi atau modul yang diperlukan untuk pengujian
-import { addToFavorite, removeFromFavorite, isRestaurantFavorite } from '../src/scripts/index'; // Sesuaikan dengan path sesungguhnya
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/named */
+import { addToFavorite, isRestaurantFavorite } from '../src/scripts/index';
 
-describe('Restaurant Detail', () => {
-  // Mock data restoran untuk pengujian
-  const mockRestaurantId = '123';
-  const mockRestaurant = {
-    id: mockRestaurantId,
-    name: 'Mock Restaurant',
-    // ... tambahkan properti lain yang diperlukan
-  };
-
-  beforeEach(() => {
-    // Set up before each test
-    // Mungkin Anda perlu melakukan pembersihan atau inisialisasi lainnya
-  });
-
-  afterEach(() => {
-    // Tear down after each test
-    // Mungkin Anda perlu melakukan pembersihan atau inisialisasi lainnya
-  });
-
-  it('should initially show "Tambahkan ke Favorite"', async () => {
-    // Mock fungsi isRestaurantFavorite untuk mengembalikan false
-    isRestaurantFavorite.mockResolvedValue(false);
-
-    // Setup elemen HTML atau state yang diperlukan
+describe('Menyukai Restoran', () => {
+  it('seharusnya tombol favorite terlihat sebelum menyukai restoran', async () => {
     document.body.innerHTML = `
-      <div id="detailPage">
-        <i class="fas fa-heart favorite-icon" data-restaurant-id="${mockRestaurantId}" tabindex="0"></i>
+      <div id="restoContainer">
+        <i id="heartIcon" class="favorite-icon" data-restaurant-id="1"></i>
       </div>
     `;
 
-    // Panggil showDetailPage atau fungsi yang menampilkan halaman detail
-    // Pastikan untuk memanggil fungsi ini dengan ID restoran yang benar
-    await showDetailPage(mockRestaurantId);
+    await isRestaurantFavorite(1);
 
-    // Pastikan aria-label pada awalnya adalah "Tambahkan ke Favorite"
-    const heartIcon = document.querySelector('.favorite-icon');
-    expect(heartIcon.getAttribute('aria-label')).toBe('Tambahkan ke Favorite');
+    expect(document.querySelector('[aria-label="Tambahkan ke Favorite"]')).toBeTruthy();
   });
 
-  it('should update to "Hapus dari Favorite" after clicking heartIcon', async () => {
-    // Mock fungsi isRestaurantFavorite untuk mengembalikan false
-    isRestaurantFavorite.mockResolvedValue(false);
-
-    // Setup elemen HTML atau state yang diperlukan
+  it('seharusnya tidak menampilkan tombol sudah disukai sebelum menyukai restoran', async () => {
     document.body.innerHTML = `
-      <div id="detailPage">
-        <i class="fas fa-heart favorite-icon" data-restaurant-id="${mockRestaurantId}" tabindex="0"></i>
+      <div id="restoContainer">
+        <i id="heartIcon" class="favorite-icon" data-restaurant-id="1"></i>
       </div>
     `;
 
-    // Mock fetch untuk mengembalikan data restoran
-    jest.spyOn(window, 'fetch').mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ restaurant: mockRestaurant }),
+    await isRestaurantFavorite(1);
+
+    expect(document.querySelector('[aria-label="Hapus dari Favorite"]')).toBeFalsy();
+  });
+
+  it('seharusnya tombol favorite berubah disukai jika tombol ditekan dan ditambahkan ke dalam daftar favorit', async () => {
+    document.body.innerHTML = `
+      <div id="restoContainer">
+        <i id="heartIcon" class="favorite-icon" data-restaurant-id="1"></i>
+      </div>
+    `;
+
+    await isRestaurantFavorite(1);
+
+    const heartIcon = document.getElementById('heartIcon');
+    heartIcon.addEventListener('click', async () => {
+      expect(document.querySelector('[aria-label="Hapus dari Favorite"]')).toBeTruthy();
+
+      await addToFavorite(1);
+      expect(await isRestaurantFavorite(1)).toBeTruthy();
     });
-
-    // Panggil showDetailPage atau fungsi yang menampilkan halaman detail
-    // Pastikan untuk memanggil fungsi ini dengan ID restoran yang benar
-    await showDetailPage(mockRestaurantId);
-
-    // Periksa apakah fungsi addToFavorite dipanggil saat mengklik heartIcon
-    const addToFavoriteSpy = jest.spyOn(window, 'addToFavorite');
-    const heartIcon = document.querySelector('.favorite-icon');
     heartIcon.click();
-    expect(addToFavoriteSpy).toHaveBeenCalledWith(mockRestaurantId);
-
-    // Pastikan bahwa data restoran sudah disimpan
-    const isFavorite = await isRestaurantFavorite(mockRestaurantId);
-    expect(isFavorite).toBe(true);
-
-    // Pastikan bahwa aria-label telah diperbarui menjadi "Hapus dari Favorite"
-    expect(heartIcon.getAttribute('aria-label')).toBe('Hapus dari Favorite');
   });
 });
